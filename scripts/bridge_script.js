@@ -1,6 +1,6 @@
 //import ether and bitcoin libraries
 const ethers = require('ethers');
-const https = require('https');
+
 //const Rsk3 = require('@rsksmart/rsk3')
 //rsk3 = new Rsk3("https://public-node.rsk.co",null)
 
@@ -602,7 +602,6 @@ smartXCP = new ethers.Contract(smartXCPAddress,smartXCPABI,walletPrivateKey)
 let burns = new Array()
 let mints = new Array()
 
-
 getBalance()
 async function getBalance(){
   let balance = await smartXCP.balanceOf("0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
@@ -644,10 +643,7 @@ async function getBurns(){
 
 //send XCP function
 
-
-
 //
-
 
 //Check for sends
 
