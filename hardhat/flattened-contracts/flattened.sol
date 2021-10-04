@@ -501,10 +501,10 @@ pragma solidity ^0.8.0;
 
 contract SmartXCP is ERC20{
 
-    address owner;
-    mapping(address=>bool) minters;
+    address public owner;
+    mapping(address=>bool) public minters;
 
-    mapping(string=>bool) is_XCP_deposit_minted;
+    mapping(string=>bool) public is_XCP_deposit_minted;
     uint public numSends;
 
     event RXCPminted(string XCP_txHash, string XCP_Address, address to, uint amount);
@@ -551,14 +551,14 @@ contract SmartXCP is ERC20{
         numSends++;
         _mint(to,amount);
 
-        RXCPmints[RXCPmints.length] = RXCPmint(XCP_txHash,XCP_Address,to,amount);
+        RXCPmints.push(RXCPmint(XCP_txHash,XCP_Address,to,amount));
         emit RXCPminted(XCP_txHash,XCP_Address,to,amount);
     }
 
     function burn(string memory XCP_Address,uint amount) public{
         _burn(msg.sender,amount);
 
-        RXCPburns[RXCPburns.length] = RXCPburn(XCP_Address,msg.sender,amount,"");
+        RXCPburns.push(RXCPburn(XCP_Address,msg.sender,amount,""));
         emit RXCPburned(XCP_Address, msg.sender, amount);
     }
 
@@ -566,5 +566,13 @@ contract SmartXCP is ERC20{
         require(minters[msg.sender]==true, "Must be Minter");
         require(keccak256(abi.encodePacked((RXCPburns[burnId].XCP_txHash))) == keccak256(abi.encodePacked((""))),"Send has already been confirmed");
         RXCPburns[burnId].XCP_txHash = _XCP_txHash;
+    }
+
+    function numMints() public view returns(uint){
+        return RXCPmints.length;
+    }
+
+    function numBurns() public view returns(uint){
+        return RXCPburns.length;
     }
 }
