@@ -5,7 +5,7 @@ const https = require('https');
 //rsk3 = new Rsk3("https://public-node.rsk.co",null)
 
 //console.log(rsk3)
-let smartXCPAddress = "0x4cdb1CB686205F9A4F6597e7819728363D845640"
+let smartXCPAddress = "0x6bF7F83152B94961127934D1033Ff8764b84AdBd"
 let smartXCPABI = [
 	{
 		"anonymous": false,
@@ -390,6 +390,44 @@ let smartXCPABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "is_XCP_deposit_minted",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "minters",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "name",
 		"outputs": [
@@ -404,12 +442,51 @@ let smartXCPABI = [
 	},
 	{
 		"inputs": [],
+		"name": "numBurns",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "numMints",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "numSends",
 		"outputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -513,7 +590,7 @@ let smartXCPABI = [
 let smartXCP
 
 let provider = new ethers.providers.JsonRpcProvider("https://public-node.testnet.rsk.co")
-//0xc914602e25FCd44879f8D9a67C17D58bd2E67Af8
+//0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8
 let mnemonic = "type sustain gold vivid ship galaxy claw age receive make because adult"
 let walletMnemonic = ethers.Wallet.fromMnemonic(mnemonic);
 let walletPrivateKey = new ethers.Wallet(walletMnemonic.privateKey)
@@ -522,13 +599,17 @@ console.log(walletPrivateKey.address)
 
 smartXCP = new ethers.Contract(smartXCPAddress,smartXCPABI,walletPrivateKey)
 
+let burns = new Array()
+let mints = new Array()
+
 
 getBalance()
 async function getBalance(){
   let balance = await smartXCP.balanceOf("0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
   console.log(balance)
   //await mint()
-  //await burn()
+  await getMints()
+  await getBurns()
 }
 
 // init()
@@ -540,11 +621,25 @@ async function getBalance(){
 // }
 //mint function
 async function mint(){
-  await smartXCP.mint("b","b",1,"0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
+  await smartXCP.mint("f","f",10,"0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
 }
 
 async function burn(){
-  await smartXCP.burn("a",1);
+  await smartXCP.burn("b",1);
+}
+async function getMints(){
+  let numMints = await smartXCP.numMints()
+  for (i=0;i<numMints;i++){
+    mints.push(await smartXCP.RXCPmints(i))
+  }
+  console.log(mints)
+}
+async function getBurns(){
+  let numBurns = await smartXCP.numBurns()
+  for (i=0;i<numBurns;i++){
+    burns.push(await smartXCP.RXCPburns(i))
+  }
+  console.log(burns)
 }
 
 //send XCP function
