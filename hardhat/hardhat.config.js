@@ -17,13 +17,14 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "rinkeby",
+  defaultNetwork: "rsk",
   networks: {
     hardhat: {
     },
-    rinkeby: {
-      url: "",
-      accounts: [""]
+    rsk: {
+      url: "https://public-node.testnet.rsk.co",
+      accounts: ["0x32566ca285cb0f37971d680dc6e2f9dfaf1d7959cce4c748e6e819db931cfaf9"],
+      gasPrice: 400000000
     }
   },
   solidity: {

@@ -12,6 +12,7 @@ contract SmartXCP is ERC20{
     mapping(address=>bool) minters;
 
     mapping(string=>bool) is_XCP_deposit_minted;
+
     uint public numSends;
 
     event RXCPminted(string XCP_txHash, string XCP_Address, address to, uint amount);
