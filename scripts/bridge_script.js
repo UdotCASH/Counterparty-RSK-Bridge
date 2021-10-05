@@ -606,7 +606,12 @@ smartXCP = new ethers.Contract(smartXCPAddress,smartXCPABI,walletPrivateKey)
 let burns = new Array()
 let mints = new Array()
 
-getBalance()
+//getBalance()
+sendtest()
+async function sendtest(){
+	let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP","1K2eXP3wsX4W5HjnkNKsqX1fgRPhFA5RNv",1)
+	console.log(rawTransaction)
+}
 async function getBalance(){
   let balance = await smartXCP.balanceOf("0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
   console.log(balance)
@@ -619,7 +624,7 @@ async function getBalance(){
 	const burns = await getBurns("1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7");
 	console.log('Burns');
 	console.log(burns);
-	const xcpBalance = await getXCPBalance("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN");
+	const xcpBalance = await getXCPBalance("1GRJD3KrSiDHvcUYyfWFmgcNci8CHo1LoJ");
 	console.log('XCP Balance');
 	console.log(xcpBalance);
 	const unsignedHex = await sendXCP("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
@@ -806,6 +811,64 @@ async function getXCPBalance(address) {
 					op: "==",
 					value: "XCP"
 				}
+			],
+			filterop: "and"
+		}
+	};
+	try {
+		const response = await axios({
+			method: 'post',
+			url: XCP_API_URL,
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			data: JSON.stringify(body),
+			auth: {
+				username: XCP_API_USER,
+				password: XCP_API_PASSWORD
+			}
+		});
+		const { data, status } = response;
+		if (status !== 200) {
+			throw new Error();
+		}
+		return data;
+	} catch (error) {
+		console.log(error);
+		return undefined;
+	}
+}
+
+// Create XCP Send Transaction
+
+async function createXCPSend(source, destination, quantity) {
+	const body = {
+		jsonrpc: "2.0",
+		id: 0,
+		method: 'create_send',
+		params: {
+			filters: [
+				{
+					field: "source",
+					op: "==",
+					value: source,
+				},
+				{
+					field: "destination",
+					op: "==",
+					value: destination,
+				},
+				{
+					field: "asset",
+					op: "==",
+					value: "XCP"
+				},
+				{
+					field: "quantity",
+					op: "==",
+					value: quantity,
+				},
 			],
 			filterop: "and"
 		}
