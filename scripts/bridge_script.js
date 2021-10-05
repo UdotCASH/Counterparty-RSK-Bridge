@@ -622,6 +622,9 @@ async function getBalance(){
 	const xcpBalance = await getXCPBalance("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN");
 	console.log('XCP Balance');
 	console.log(xcpBalance);
+	const unsignedHex = await sendXCP("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
+	console.log('unsigned hex');
+	console.log(unsignedHex);
 }
 
 // init()
@@ -737,6 +740,49 @@ async function getBurns(address) {
 //set up XCP wallet
 
 //send XCP function
+async function sendXCP(source, destination, quantity, memo) {
+	let unsignedHex;
+	const body = {
+		jsonrpc: "2.0",
+		id: 0,
+		method: 'create_send',
+		params: {
+			source,
+			destination,
+			asset: "XCP",
+			quantity,
+		}
+	};
+	if (typeof memo === 'string') {
+		body.params.memo = memo;
+	}
+	try {
+		const response = await axios({
+			method: 'post',
+			url: XCP_API_URL,
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			data: JSON.stringify(body),
+			auth: {
+				username: XCP_API_USER,
+				password: XCP_API_PASSWORD
+			}
+		});
+		const { data, status } = response;
+		if (status !== 200) {
+			throw new Error();
+		}
+		const { result } = data;
+		unsignedHex = result;
+		// TODO: sign and broadcast
+		return data;
+	} catch (error) {
+		console.log(error);
+		return undefined;
+	}
+}
 
 //TODO
 //send away excess XCP
