@@ -1,10 +1,14 @@
 //import ether and bitcoin libraries
 const ethers = require('ethers');
+const axios = require('axios');
 
 //const Rsk3 = require('@rsksmart/rsk3')
 //rsk3 = new Rsk3("https://public-node.rsk.co",null)
 
 //console.log(rsk3)
+const XCP_API_URL = "http://public.coindaddy.io:4000";
+const XCP_API_USER = "rpc";
+const XCP_API_PASSWORD = "1234";
 let smartXCPAddress = "0x6bF7F83152B94961127934D1033Ff8764b84AdBd"
 let smartXCPABI = [
 	{
@@ -609,6 +613,15 @@ async function getBalance(){
   //await mint()
   await getMints()
   await getBurns()
+	const sends = await getSends("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN");
+	console.log('Sends');
+	console.log(sends);
+	const burns = await getBurns("1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7");
+	console.log('Burns');
+	console.log(burns);
+	const xcpBalance = await getXCPBalance("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN");
+	console.log('XCP Balance');
+	console.log(xcpBalance);
 }
 
 // init()
@@ -642,13 +655,133 @@ async function getBurns(){
 }
 
 //send XCP function
-
-//
+async function sendXCP() {
+}
 
 //Check for sends
+async function getSends(address) {
+	const body = {
+		jsonrpc: "2.0",
+		id: 0,
+		method: 'get_sends',
+		params: {
+			filters: [{
+				field: "destination",
+				op: "==",
+				value: address,
+			}],
+		}
+	};
+	try {
+		const response = await axios({
+			method: 'post',
+			url: XCP_API_URL,
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			data: JSON.stringify(body),
+			auth: {
+				username: XCP_API_USER,
+				password: XCP_API_PASSWORD
+			}
+		});
+		const { data, status } = response;
+		if (status !== 200) {
+			throw new Error();
+		}
+		return data;
+	} catch (error) {
+		console.log(error);
+		return undefined;
+	}
+}
 
 //Check for burns
-
+async function getBurns(address) {
+	const body = {
+		jsonrpc: "2.0",
+		id: 0,
+		method: 'get_burns',
+		params: {
+			filters: [{
+				field: "source",
+				op: "==",
+				value: address,
+			}],
+		}
+	};
+	try {
+		const response = await axios({
+			method: 'post',
+			url: XCP_API_URL,
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			data: JSON.stringify(body),
+			auth: {
+				username: XCP_API_USER,
+				password: XCP_API_PASSWORD
+			}
+		});
+		const { data, status } = response;
+		if (status !== 200) {
+			throw new Error();
+		}
+		return data;
+	} catch (error) {
+		console.log(error);
+		return undefined;
+	}
+}
 
 //send away excess XCP
+
+
 //get XCP balance
+async function getXCPBalance(address) {
+	const body = {
+		jsonrpc: "2.0",
+		id: 0,
+		method: 'get_balances',
+		params: {
+			filters: [
+				{
+					field: "address",
+					op: "==",
+				  value: address,
+				},
+				{
+					field: "asset",
+					op: "==",
+					value: "XCP"
+				}
+			],
+			filterop: "and"
+		}
+	};
+	try {
+		const response = await axios({
+			method: 'post',
+			url: XCP_API_URL,
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			data: JSON.stringify(body),
+			auth: {
+				username: XCP_API_USER,
+				password: XCP_API_PASSWORD
+			}
+		});
+		const { data, status } = response;
+		if (status !== 200) {
+			throw new Error();
+		}
+		return data;
+	} catch (error) {
+		console.log(error);
+		return undefined;
+	}
+}

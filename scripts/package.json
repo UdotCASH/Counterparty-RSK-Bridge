@@ -3,6 +3,7 @@
     "ethers": "^5.4.7"
   },
   "dependencies": {
-    "@rsksmart/rsk3": "^0.3.4"
+    "@rsksmart/rsk3": "^0.3.4",
+    "axios": "^0.22.0"
   }
 }
