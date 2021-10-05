@@ -609,7 +609,7 @@ let mints = new Array()
 //getBalance()
 sendtest()
 async function sendtest(){
-	let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP","1K2eXP3wsX4W5HjnkNKsqX1fgRPhFA5RNv",1)
+	let rawTransaction = await createXCPSend("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
 	console.log(rawTransaction)
 }
 async function getBalance(){
@@ -627,7 +627,7 @@ async function getBalance(){
 	const xcpBalance = await getXCPBalance("1GRJD3KrSiDHvcUYyfWFmgcNci8CHo1LoJ");
 	console.log('XCP Balance');
 	console.log(xcpBalance);
-	const unsignedHex = await sendXCP("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
+	const unsignedHex = await createXCPSend("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
 	console.log('unsigned hex');
 	console.log(unsignedHex);
 }
@@ -746,47 +746,8 @@ async function getBurns(address) {
 
 //send XCP function
 async function sendXCP(source, destination, quantity, memo) {
-	let unsignedHex;
-	const body = {
-		jsonrpc: "2.0",
-		id: 0,
-		method: 'create_send',
-		params: {
-			source,
-			destination,
-			asset: "XCP",
-			quantity,
-		}
-	};
-	if (typeof memo === 'string') {
-		body.params.memo = memo;
-	}
-	try {
-		const response = await axios({
-			method: 'post',
-			url: XCP_API_URL,
-			headers: {
-				'Content-Type': 'application/json',
-				'Accept': 'application/json'
-			},
-			data: JSON.stringify(body),
-			auth: {
-				username: XCP_API_USER,
-				password: XCP_API_PASSWORD
-			}
-		});
-		const { data, status } = response;
-		if (status !== 200) {
-			throw new Error();
-		}
-		const { result } = data;
-		unsignedHex = result;
-		// TODO: sign and broadcast
-		return data;
-	} catch (error) {
-		console.log(error);
-		return undefined;
-	}
+	const unsignedHex = await createXCPSend(source, destination, quantity, memo);
+	// TODO: add code for signing and transmitting tx
 }
 
 //TODO
@@ -842,37 +803,22 @@ async function getXCPBalance(address) {
 
 // Create XCP Send Transaction
 
-async function createXCPSend(source, destination, quantity) {
+async function createXCPSend(source, destination, quantity, memo) {
+	let unsignedHex;
 	const body = {
 		jsonrpc: "2.0",
 		id: 0,
 		method: 'create_send',
 		params: {
-			filters: [
-				{
-					field: "source",
-					op: "==",
-					value: source,
-				},
-				{
-					field: "destination",
-					op: "==",
-					value: destination,
-				},
-				{
-					field: "asset",
-					op: "==",
-					value: "XCP"
-				},
-				{
-					field: "quantity",
-					op: "==",
-					value: quantity,
-				},
-			],
-			filterop: "and"
+			source,
+			destination,
+			asset: "XCP",
+			quantity,
 		}
 	};
+	if (typeof memo === 'string') {
+		body.params.memo = memo;
+	}
 	try {
 		const response = await axios({
 			method: 'post',
@@ -891,7 +837,9 @@ async function createXCPSend(source, destination, quantity) {
 		if (status !== 200) {
 			throw new Error();
 		}
-		return data;
+		const { result } = data;
+		unsignedHex = result;
+		return unsignedHex;
 	} catch (error) {
 		console.log(error);
 		return undefined;
