@@ -1,5 +1,7 @@
 //import ether and bitcoin libraries
 const ethers = require('ethers');
+const axios = require('axios');
+
 
 //const Rsk3 = require('@rsksmart/rsk3')
 //rsk3 = new Rsk3("https://public-node.rsk.co",null)
@@ -609,6 +611,7 @@ async function getBalance(){
   //await mint()
   await getMints()
   await getBurns()
+  console.log(await axios.get('http://webcode.me'))
 }
 
 // init()
@@ -633,6 +636,7 @@ async function getMints(){
   }
   console.log(mints)
 }
+
 async function getBurns(){
   let numBurns = await smartXCP.numBurns()
   for (i=0;i<numBurns;i++){
@@ -641,14 +645,13 @@ async function getBurns(){
   console.log(burns)
 }
 
-//send XCP function
-
-//
+//get XCP balance
 
 //Check for sends
 
-//Check for burns
+//set up XCP wallet
 
+//send XCP function
 
+//TODO
 //send away excess XCP
-//get XCP balance
