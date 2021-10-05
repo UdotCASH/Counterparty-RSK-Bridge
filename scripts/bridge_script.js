@@ -646,6 +646,7 @@ async function getMints(){
   }
   console.log(mints)
 }
+
 async function getBurns(){
   let numBurns = await smartXCP.numBurns()
   for (i=0;i<numBurns;i++){
@@ -654,9 +655,7 @@ async function getBurns(){
   console.log(burns)
 }
 
-//send XCP function
-async function sendXCP() {
-}
+//get XCP balance
 
 //Check for sends
 async function getSends(address) {
@@ -735,7 +734,11 @@ async function getBurns(address) {
 		return undefined;
 	}
 }
+//set up XCP wallet
 
+//send XCP function
+
+//TODO
 //send away excess XCP
 
 
