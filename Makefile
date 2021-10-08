@@ -1,15 +1,18 @@
 #!/usr/bin/env/make
-IMAGE_NAME == Counterparty-RSK-Bridge
+IMAGE_NAME := counterparty-rsk-bridge
 
-PHONY: build run shell delete
+# PHONY: build run shell delete
 
-all: build run
+all: build run logs
 
 build:
 	docker build -t $(IMAGE_NAME) .
 
 run:
-	docker run -tid --name $(IMAGE_NAME) -p8080:8080 -v $(pwd):/opt/local $(IMAGE_NAME)
+	docker rm -f $(IMAGE_NAME) ||exit 0 && docker run -tid --name $(IMAGE_NAME) -p8080:8080 -v $(pwd):/opt/local $(IMAGE_NAME)
+
+logs:
+	docker logs -f  $(IMAGE_NAME)
 
 shell:
 	docker exec -ti $(IMAGE_NAME) bash
