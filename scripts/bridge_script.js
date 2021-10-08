@@ -1,6 +1,7 @@
 //import ether and bitcoin libraries
 const ethers = require('ethers');
 const axios = require('axios');
+const bitcoin = require('bitcoinjs-lib');
 
 //const Rsk3 = require('@rsksmart/rsk3')
 //rsk3 = new Rsk3("https://public-node.rsk.co",null)
@@ -609,8 +610,14 @@ let mints = new Array()
 //getBalance()
 sendtest()
 async function sendtest(){
-	let rawTransaction = await createXCPSend("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
-	console.log(rawTransaction)
+	let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 10, "1234");
+	console.log(rawTransaction);
+	const signedTxHex = await signP2SHDataTX(
+		"KySMz3MKMH454tf4jMcD38RgyNj8MfGNLzgMjMf1weDAr9u2Ak9w",
+		rawTransaction,
+		bitcoin.networks.bitcoin
+	);
+	console.log(signedTxHex);
 }
 async function getBalance(){
   let balance = await smartXCP.balanceOf("0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
@@ -844,4 +851,12 @@ async function createXCPSend(source, destination, quantity, memo) {
 		console.log(error);
 		return undefined;
 	}
+}
+
+async function signP2SHDataTX(wif, txHex, network) {
+	const key = bitcoin.ECPair.fromWIF(wif);
+	const txb = bitcoin.TransactionBuilder.fromTransaction(bitcoin.Transaction.fromHex(txHex), network);
+	txb.sign(0, key);
+	const signedTxHex = txb.build().toHex();
+	return signedTxHex;
 }
