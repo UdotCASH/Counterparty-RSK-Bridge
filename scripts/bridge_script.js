@@ -6,10 +6,13 @@ const bitcoin = require('bitcoinjs-lib');
 //const Rsk3 = require('@rsksmart/rsk3')
 //rsk3 = new Rsk3("https://public-node.rsk.co",null)
 
+const BTC_MAINNET = bitcoin.networks.bitcoin;
+
 //console.log(rsk3)
 const XCP_API_URL = "http://public.coindaddy.io:4000";
 const XCP_API_USER = "rpc";
 const XCP_API_PASSWORD = "1234";
+const BTC_URL = "https://damp-ancient-water.btc.quiknode.pro/9b377f70086180fa6d1fc6153060f09e9dd26111/";
 let smartXCPAddress = "0x6bF7F83152B94961127934D1033Ff8764b84AdBd"
 let smartXCPABI = [
 	{
@@ -607,17 +610,21 @@ smartXCP = new ethers.Contract(smartXCPAddress,smartXCPABI,walletPrivateKey)
 let burns = new Array()
 let mints = new Array()
 
-//getBalance()
-sendtest()
+getBalance()
+// sendtest()
 async function sendtest(){
-	let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 10, "1234");
-	console.log(rawTransaction);
-	const signedTxHex = await signP2SHDataTX(
-		"KySMz3MKMH454tf4jMcD38RgyNj8MfGNLzgMjMf1weDAr9u2Ak9w",
-		rawTransaction,
-		bitcoin.networks.bitcoin
-	);
-	console.log(signedTxHex);
+	// let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
+	// let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP", "12HyNbsSHezqr4nXRmNSRp5XJGP1zkuLM7", 1, "memolobo");
+	// console.log('Raw tx ', rawTransaction);
+	//const signedTxHex = await signP2SHDataTX(
+	// 	"KySMz3MKMH454tf4jMcD38RgyNj8MfGNLzgMjMf1weDAr9u2Ak9w",
+	//	rawTransaction,
+	//	bitcoin.networks.bitcoin
+	//);
+	// console.log(signedTxHex);
+	// console.log(rawTransaction)
+	let broadcast = await broadcastSignedTransaction('01000000011bac3304e50a12c2d7278a799d0124ed723fd8685376640f31fd19c8c0f76de2000000001976a914523fe1c6fa3add0eca16d3892414438d4f2c31fa88acffffffff020000000000000000306a2e207328c545f5f9422fd7c1d3750e7115ecde96c78cca6b944829c68e46207e4975ee5c0e8fa3d534bdb38dc2cda218730100000000001976a914523fe1c6fa3add0eca16d3892414438d4f2c31fa88ac00000000');
+	console.log(broadcast);
 }
 async function getBalance(){
   let balance = await smartXCP.balanceOf("0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
@@ -628,7 +635,7 @@ async function getBalance(){
 	const sends = await getSends("1BS2eDhEZ3TwcwTBDNPSrKtskTd4Cyy9oN");
 	console.log('Sends');
 	console.log(sends);
-	const burns = await getBurns("1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7");
+	const burns = await getXCPBurns("1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7");
 	console.log('Burns');
 	console.log(burns);
 	const xcpBalance = await getXCPBalance("1GRJD3KrSiDHvcUYyfWFmgcNci8CHo1LoJ");
@@ -639,13 +646,7 @@ async function getBalance(){
 	console.log(unsignedHex);
 }
 
-// init()
-//
-// //init
-// function init(){
-//   // wallet = new ethers.
-//   // smartXCP = new ethers.Contract()
-// }
+
 //mint function
 async function mint(){
   await smartXCP.mint("f","f",10,"0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
@@ -662,6 +663,7 @@ async function getMints(){
   console.log(mints)
 }
 
+//get Smart XCP Burns
 async function getBurns(){
   let numBurns = await smartXCP.numBurns()
   for (i=0;i<numBurns;i++){
@@ -711,44 +713,7 @@ async function getSends(address) {
 	}
 }
 
-//Check for burns
-async function getBurns(address) {
-	const body = {
-		jsonrpc: "2.0",
-		id: 0,
-		method: 'get_burns',
-		params: {
-			filters: [{
-				field: "source",
-				op: "==",
-				value: address,
-			}],
-		}
-	};
-	try {
-		const response = await axios({
-			method: 'post',
-			url: XCP_API_URL,
-			headers: {
-				'Content-Type': 'application/json',
-				'Accept': 'application/json'
-			},
-			data: JSON.stringify(body),
-			auth: {
-				username: XCP_API_USER,
-				password: XCP_API_PASSWORD
-			}
-		});
-		const { data, status } = response;
-		if (status !== 200) {
-			throw new Error();
-		}
-		return data;
-	} catch (error) {
-		console.log(error);
-		return undefined;
-	}
-}
+
 //set up XCP wallet
 
 //send XCP function
@@ -800,7 +765,8 @@ async function getXCPBalance(address) {
 		const { data, status } = response;
 		if (status !== 200) {
 			throw new Error();
-		}
+		}	let unsignedHex;
+
 		return data;
 	} catch (error) {
 		console.log(error);
@@ -841,6 +807,8 @@ async function createXCPSend(source, destination, quantity, memo) {
 			}
 		});
 		const { data, status } = response;
+		console.log('XCP DAT ');
+		console.log(data);
 		if (status !== 200) {
 			throw new Error();
 		}
@@ -849,9 +817,91 @@ async function createXCPSend(source, destination, quantity, memo) {
 		return unsignedHex;
 	} catch (error) {
 		console.log(error);
+		return(error);
+	}
+}
+
+//Broadcast Signed Transaction
+async function broadcastSignedTransaction(signedTxHex){
+	// ### Send Signed Tx hex
+	// curl  --data-binary '{"jsonrpc": "1.0", "id": "curltest", "method": "sendrawtransaction", "params": ["0100000001e2e40bfeb263800b6b24120d2a42a543c96ef8084c5b7ffc889ed0474c1a50f0010000006b483045022100c9790b2e168d52b56870cf4671eefd78dd51033eeea82a500ef75c5455a41d3d0220526681462d01d969d5cdb84be104b97b82f006d484afaf3a6b3e639590e34856012103044680f1bdc06881a699981e82b24096f4f22bea51b13a5e781441e99cc4f96bffffffff020000000000000000306a2e7b987f72fe001f75a2908046bfac00c9505d4c0438b855915c6611a63bc1c339d95e7e149f2b777d948dbcbfb8e2a0210000000000001976a914523fe1c6fa3add0eca16d3892414438d4f2c31fa88ac00000000"]}' -H 'content-type: text/plain;' https://damp-ancient-water.btc.quiknode.pro/9b377f70086180fa6d1fc6153060f09e9dd26111/
+
+	// 01000000011bac3304e50a12c2d7278a799d0124ed723fd8685376640f31fd19c8c0f76de2000000001976a914523fe1c6fa3add0eca16d3892414438d4f2c31fa88acffffffff020000000000000000306a2e207328c545f5f9422fd7c1d3750e7115ecde96c78cca6b944829c68e46207e4975ee5c0e8fa3d534bdb38dc2cda218730100000000001976a914523fe1c6fa3add0eca16d3892414438d4f2c31fa88ac00000000 undefined;
+	const body = {
+		jsonrpc: "1.0",
+		id: 'curltest',
+		method: 'sendrawtransaction',
+		params: [signedTxHex]
+	};
+	try {
+		const response = await axios({
+			method: 'post',
+			url: BTC_URL,
+			data: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'text/plain'
+			}});
+		const { data, status } = response;
+		if (status !== 200) {
+			throw new Error();
+		}
+		return data;
+	} catch (error) {
+		console.log(error);
+		return;
+	}
+}
+
+//get XCP balance
+
+//Check for burns
+async function getXCPBurns(address) {
+	const body = {
+		jsonrpc: "2.0",
+		id: 0,
+		method: 'get_burns',
+		params: {
+			filters: [{
+				field: "source",
+				op: "==",
+				value: address,
+			}],
+		}
+	};
+	try {
+		const response = await axios({
+			method: 'post',
+			url: XCP_API_URL,
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json'
+			},
+			data: JSON.stringify(body),
+			auth: {
+				username: XCP_API_USER,
+				password: XCP_API_PASSWORD
+			}
+		});
+		const { data, status } = response;
+		if (status !== 200) {
+			throw new Error();
+		}
+		return data;
+	} catch (error) {
+		console.log(error);
 		return undefined;
 	}
 }
+//set up XCP wallet
+
+//send XCP function
+async function sendXCP(source, destination, quantity, memo) {
+	const unsignedHex = await createXCPSend(source, destination, quantity, memo);
+	// TODO: add code for signing and transmitting tx
+}
+
+//TODO
+//send away excess XCP
 
 async function signP2SHDataTX(wif, txHex, network) {
 	const key = bitcoin.ECPair.fromWIF(wif);
