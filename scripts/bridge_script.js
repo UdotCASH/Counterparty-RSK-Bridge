@@ -610,8 +610,8 @@ smartXCP = new ethers.Contract(smartXCPAddress,smartXCPABI,walletPrivateKey)
 let burns = new Array()
 let mints = new Array()
 
-getBalance()
-// sendtest()
+// getBalance()
+sendtest()
 async function sendtest(){
 	// let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
 	// let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP", "12HyNbsSHezqr4nXRmNSRp5XJGP1zkuLM7", 1, "memolobo");
@@ -623,7 +623,7 @@ async function sendtest(){
 	//);
 	// console.log(signedTxHex);
 	// console.log(rawTransaction)
-	let broadcast = await broadcastSignedTransaction('01000000011bac3304e50a12c2d7278a799d0124ed723fd8685376640f31fd19c8c0f76de2000000001976a914523fe1c6fa3add0eca16d3892414438d4f2c31fa88acffffffff020000000000000000306a2e207328c545f5f9422fd7c1d3750e7115ecde96c78cca6b944829c68e46207e4975ee5c0e8fa3d534bdb38dc2cda218730100000000001976a914523fe1c6fa3add0eca16d3892414438d4f2c31fa88ac00000000');
+	let broadcast = await broadcastSignedTransaction('0100000001e2e40bfeb263800b6b24120d2a42a543c96ef8084c5b7ffc889ed0474c1a50f0010000006b483045022100c9790b2e168d52b56870cf4671eefd78dd51033eeea82a500ef75c5455a41d3d0220526681462d01d969d5cdb84be104b97b82f006d484afaf3a6b3e639590e34856012103044680f1bdc06881a699981e82b24096f4f22bea51b13a5e781441e99cc4f96bffffffff020000000000000000306a2e7b987f72fe001f75a2908046bfac00c9505d4c0438b855915c6611a63bc1c339d95e7e149f2b777d948dbcbfb8e2a0210000000000001976a914523fe1c6fa3add0eca16d3892414438d4f2c31fa88ac00000000');
 	console.log(broadcast);
 }
 async function getBalance(){
@@ -833,6 +833,7 @@ async function broadcastSignedTransaction(signedTxHex){
 		method: 'sendrawtransaction',
 		params: [signedTxHex]
 	};
+	console.log(body);
 	try {
 		const response = await axios({
 			method: 'post',
