@@ -9,6 +9,7 @@ const {
   createXCPSend,
   broadcastSignedTransaction,
 } = require('./xcp');
+const { processSends, processBurns, detect } = require('./bot');
 
 //const Rsk3 = require('@rsksmart/rsk3')
 //rsk3 = new Rsk3("https://public-node.rsk.co",null)
@@ -22,6 +23,7 @@ const smartXCP = new SmartXCP().smartXCP;
 
 // getBalance();
 // sendtest();
+checkBot();
 async function sendtest() {
   // let rawTransaction = await createXCPSend("18VtwKsCQEoh7WbBmaPrnkmiD8mGNjM2AP", "1NT4pDJScATaWR3bqXv8NSBGmBoYHrVnz7", 1, "1234");
   let rawTransaction = await createXCPSend(
@@ -73,6 +75,11 @@ async function getBalance() {
   );
   console.log('unsigned hex');
   console.log(unsignedHex);
+}
+
+async function checkBot() {
+  processBurns(smartXCP);
+  processSends(smartXCP);
 }
 //TODO
 //send away excess XCP

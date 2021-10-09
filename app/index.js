@@ -586,7 +586,7 @@ let persistentProvider = new ethers.providers.JsonRpcProvider("https://public-no
 let signer
 //0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8
 
-
+//initializes app
 async function initialize(){
 	await ethereum.enable()
 
@@ -615,7 +615,8 @@ async function getRBTCBalance(){
 }
 
 async function getRXCPBalance(){
-  let balance = await smartXCP.balanceOf("0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8")
+  let balance = await smartXCP.balanceOf(signer._address)
+	console.log("adsfasdf")
   balance = ethers.utils.formatEther(balance)
   balance = ethers.utils.commify(balance)
   return(balance)
