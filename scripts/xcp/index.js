@@ -4,6 +4,7 @@ const getXCPBurns = require('./getXCPBurns');
 const signP2SHDataTX = require('./signP2SHDataTx');
 const createXCPSend = require('./createXCPSend');
 const broadcastSignedTransaction = require('./broadcastSignedTransaction');
+const { XCP_WALLET } = require('./apiDetails');
 
 module.exports = {
   getSends,
@@ -12,4 +13,5 @@ module.exports = {
   signP2SHDataTX,
   createXCPSend,
   broadcastSignedTransaction,
+  XCP_WALLET,
 };

@@ -10,6 +10,7 @@
     "bitcore-lib": "^8.25.10",
     "bitcore-message": "^1.0.4",
     "crypto-js": "^4.1.1",
-    "cryptocoin": "^0.3.0"
+    "cryptocoin": "^0.3.0",
+    "dotenv": "^10.0.0"
   }
 }
