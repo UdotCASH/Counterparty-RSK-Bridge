@@ -21,6 +21,7 @@ A 2-way bridge for XCP and Counterparty assets to move between Counterparty and 
 - Open source repo
 - Run script on Docker
 - Host on u.exchange
+- Validate XCP addresses and BTC tx hashes on front end and smart contract
 - Write Test suite
 - Test 2 way bridge
 - Create better front end
