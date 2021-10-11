@@ -1,4 +1,4 @@
-const address = '0x6bF7F83152B94961127934D1033Ff8764b84AdBd';
+const address = process.env.CONTRACT_ADDRESS;
 const ABI = [
   {
     anonymous: false,
