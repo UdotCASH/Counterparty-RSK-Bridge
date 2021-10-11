@@ -13,9 +13,12 @@ A 2-way bridge for XCP and Counterparty assets to move between Counterparty and 
 
 ### TODO
 
-* Automatically Send XCP transaction
-* Create app
-* Create nodejsscript
+* Organize Repo
+* Put all private data in .env file
+* Open source repo
 * Run script on Docker
+* Write Test suite
 * Test 2 way bridge
-* Launch u-eschange on RSK
+* Create better front end
+* Show wrap and unwrap history, including pending
+* Launch u-exchange on RSK

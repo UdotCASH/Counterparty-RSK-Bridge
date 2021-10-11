@@ -666,6 +666,7 @@ async function processSends(){
 async function processBurns(){
   console.log("Process Burns")
 	let burns = await getBurns()
+  console.log(burns.length, " buuuuuuuuuuuuurns")
 	for(let i=0; i<burns.length;i++){
     console.log("burn ",i)
 		let xcp_txHash = burns[i].XCP_txHash
@@ -679,26 +680,27 @@ async function processBurns(){
       let amount = burns[i].amount
       amount = ethers.utils.formatUnits(amount,10)
       amount = parseInt(amount)
+      console.log(amount, " this is amount")
+      if(amount!=0){
+        let rawTransaction = await createXCPSend(XCPWallet, burns[i].XCP_Address, amount, "a",2500);
+        console.log("raw transaction")
+        console.log(rawTransaction)
 
-      let rawTransaction = await createXCPSend(XCPWallet, burns[i].XCP_Address, amount, "a",2500);
-      console.log("raw transaction")
-      console.log(rawTransaction)
-
-      let signedTransaction = await signp2pkhDataTX(
-    		wif,
-    		rawTransaction,
-    		bitcoin.networks.bitcoin
-    	)
-      console.log("signed transaction")
-      console.log(signedTransaction)
-      let xcp_tx = await broadcastSignedTransaction(signedTransaction)
-      console.log(xcp_tx)
-      let xcp_txHash = xcp_tx.result
-      let confirmsend_tx = await smartXCP.confirmSend(i,xcp_txHash)
-      let conf = await confirmsend_tx.wait()
-      console.log(conf)
-      console.log("burn")
-		  console.log(burns[i])
+        let signedTransaction = await signp2pkhDataTX(
+      		wif,
+      		rawTransaction,
+      		bitcoin.networks.bitcoin
+      	)
+        console.log("signed transaction")
+        console.log(signedTransaction)
+        let xcp_tx = await broadcastSignedTransaction(signedTransaction)
+        console.log(xcp_tx)
+        let xcp_txHash = xcp_tx.result
+        let confirmsend_tx = await smartXCP.confirmSend(i,xcp_txHash)
+        let conf = await confirmsend_tx.wait()
+        console.log(conf)
+        console.log("burn")
+      }
 		}
 		console.log(burns[i])
   }
@@ -861,7 +863,11 @@ async function getXCPBalance(address) {
 // Create XCP Send Transaction
 
 async function createXCPSend(source, destination, quantity, memo, fee) {
-
+  console.log("tes")
+  console.log(source)
+  console.log(destination)
+  console.log(quantity)
+  console.log(fee)
   const body = {
     jsonrpc: '2.0',
     id: 0,
@@ -879,6 +885,7 @@ async function createXCPSend(source, destination, quantity, memo, fee) {
   if (typeof fee === 'number') {
     body.params.fee = fee;
   }
+  body.params.allow_unconfirmed_inputs = true;
   try {
     const response = await axios({
       method: 'post',
