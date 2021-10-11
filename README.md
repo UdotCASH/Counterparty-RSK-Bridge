@@ -17,6 +17,7 @@ A 2-way bridge for XCP and Counterparty assets to move between Counterparty and 
 * Put all private data in .env file
 * Open source repo
 * Run script on Docker
+* Host on u.exchange
 * Write Test suite
 * Test 2 way bridge
 * Create better front end
