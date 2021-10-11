@@ -1,4 +1,4 @@
-let smartXCPAddress = "0x6bF7F83152B94961127934D1033Ff8764b84AdBd"
+let smartXCPAddress = "0xa511ec4390350b6817CA9122Df8Bd8297eA532F0"
 let smartXCPABI = [
 	{
 		"anonymous": false,
@@ -582,7 +582,7 @@ let smartXCPABI = [
 ]
 let smartXCP
 
-let persistentProvider = new ethers.providers.JsonRpcProvider("https://public-node.testnet.rsk.co")
+let persistentProvider = new ethers.providers.JsonRpcProvider("https://public-node.rsk.co")
 let signer
 //0xc914602e25FCD44879f8D9a67c17D58Bd2E67af8
 
@@ -675,6 +675,7 @@ async function generateMEMO(){
 async function burn() {
   let XCPAddress = document.getElementById("XCPAddress").value
   let amount = document.getElementById("amountToBurn").value
+	amount = ethers.utils.parseEther(amount)
 
   await smartXCP.burn(XCPAddress,amount)
 }
