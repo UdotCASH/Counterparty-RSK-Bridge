@@ -11,6 +11,7 @@ async function createXCPSend(source, destination, quantity, memo, fee) {
       destination,
       asset: 'XCP',
       quantity,
+      allow_unconfirmed_inputs: true,
     },
   };
   if (typeof memo === 'string') {
