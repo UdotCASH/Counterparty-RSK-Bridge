@@ -10,6 +10,7 @@ A 2-way bridge for XCP and Counterparty assets to move between Counterparty and 
 
 ### TODO
 
+Finish By Nov 8 - Bounty 600k UCASH
 #### Priority
 - Open source repo
 - Host on u.exchange
