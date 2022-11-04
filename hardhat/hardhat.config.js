@@ -23,7 +23,7 @@ module.exports = {
     },
     rsk: {
       url: "https://public-node.testnet.rsk.co",
-      accounts: ["0x32566ca285cb0f37971d680dc6e2f9dfaf1d7959cce4c748e6e819db931cfaf9"],
+      accounts: [""],
       gasPrice: 400000000
     }
   },
